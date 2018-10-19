@@ -1,0 +1,106 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{float}
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{4}
+\usepackage{tabularx}
+
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{listings}
+\usepackage{lmodern}
+
+\usepackage{minted}
+\usepackage{color}
+\begin{document}
+\begin{center}
+
+ 
+  
+ 
+   \large
+  	\vspace{2cm}
+  \textbf{Université Paris Diderot- Master 2}\\
+  \vspace{1cm}
+  \LARGE
+  \textbf{Programmation embarquée}\\
+   \vspace*{1cm}
+\LARGE
+  \textbf{TP N°1}
+ 
+  \large
+  \LARGE
+  \setlength{\fboxsep}{0.5cm}
+  \begin{framed}
+	\textbf{Langages, techniques et outils}
+  \end{framed}
+  \vspace{2cm}
+\begin{table}[H]
+   \setlength{\tabcolsep}{2cm}
+    \large
+	\centering
+	\begin{tabular}{l}
+		\textbf{Réalisé par :}    
+		 \\  \\
+		 -\textbf{???} ???\\
+		- \textbf{ KEBAILI } Zohra Kaouter\\
+	
+	
+		
+  
+
+	\end{tabular}
+  \end{table}
+  \vspace{\fill}
+  \large
+  \textbf{Promotion 2018/2019}
+   \end{center}
+\newpage
+\section{Développez le générateur de données}
+
+\begin{minted}{c}
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include "header.h"
+/**
+* Remplis un tableau avec la suite de Fibonnacci.
+* @param output_array tableau où la suite est enregistré
+* @param size nombre de valeur à inscrire dans \a output_array
+* @param min_value valeur jusqu'à laquelle les nombres ne sont pas enregistrés
+
+*/
+void fibonacci(uint32_t output_array[], uint32_t size, uint32_t min_value)
+{
+	uint32_t precprec=0,prec=1,c=0,i,tmp;
+	if(size>0)
+	{
+	for(i=0;i<size;i++)
+	{
+		if(i>1)
+		{
+			tmp=precprec+prec;
+			precprec=prec;
+			prec=tmp;
+		}
+		else
+		{
+			tmp=i;
+
+		}
+		if(tmp> min_value)
+		{
+			output_array[c]=tmp;
+			c++;
+		}
+	}
+	}
+}
+
+\end{minted}
+
+
+
+\end{document}
