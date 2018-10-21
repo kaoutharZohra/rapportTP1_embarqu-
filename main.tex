@@ -11,10 +11,12 @@
 \usepackage{framed}
 \usepackage{listings}
 \usepackage{lmodern}
-
+\usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{minted}
 \usepackage{color}
+\newcommand\tab[1][1cm]{\hspace*{#1}}
 \begin{document}
+
 \begin{center}
 
  
@@ -70,7 +72,6 @@ Le code de la fonction fibonnacci itérative dévelopée :
 * @param output_array tableau où la suite est enregistré
 * @param size nombre de valeur à inscrire dans \a output_array
 * @param min_value valeur jusqu'à laquelle les nombres ne sont pas enregistrés
-
 */
 void fibonacci(uint32_t output_array[], uint32_t size, uint32_t min_value)
 {
@@ -107,6 +108,7 @@ le script minimal nécessaire à l'affichage des deux tableaux, avant après le 
 
 \begin{framed}
  {\fontfamily{qcr}\selectfont
+ \noindent
 set remotetimeout 10000\newline
 set logging file logfile.txt\newline
 set logging overwrite on\newline
@@ -116,18 +118,16 @@ set print pretty on \newline
 set print array on\newline
 tar extended-remote localhost:1234 \#se connecter au serveur TSIM\newline 
 load\newline
-mon perf reset\newline
+\# Définir un breakpoint au niveau de la fonction\newline\# test() appelée avant et après \newline
+\#l'appel de la fonction périmetre. \newline
 \color{red}
 hbreak test \newline
 \color{black}
-\# Définir un breakpoint au niveau de la fonction test() appelée avant et après \newline
-\#l'appel de la fonction périmetre. \newline
-
 commands \newline
-silent \newline
-	print rayons\newline
-	print perimetres\newline
-cont\newline
+\tab silent \newline
+\tab 	print rayons\newline
+\tab 	print perimetres\newline
+\tab cont\newline
 end\newline
 start \newline
 cont\newline
@@ -135,6 +135,7 @@ cont\newline
 }
   \end{framed}   
 \newpage
+
 \section{Création des sections}
 Aprés avoir trouvé le fichier du linker script créé par défaut dans ?? , nous avons créé une copie de celui ci ,que nous avons modifié en  ajoutant la section "myarrays" suivant le modèle de la section bss, puis nous avons modifié les options de linkage de Eclipse pour forcer le linker à utiliser notre linker script,comme suit ??:
 
@@ -168,63 +169,32 @@ SECTIONS
 \}\newline
 }
 \end{framed}
-Le passage suivant est extrait du fichier map.txt généré par la commande ??.Les informations concernant les variables globales sont en rouge et celles qui concernent les fonctions sont en bleu.
+
+Les passages suivants sont  extraits du fichier map.txt généré en ajoutant l'option  -MAP=Map.txt aux options du linker( voir la figure 1) .Les informations concernant les variables globales sont dans ce passage :
 \begin{framed}
-...\newline
- {\fontfamily{qcr}\selectfont
-.text           0x40000000     0x6350\newline
- CREATE\_OBJECT\_SYMBOLS\newline
- *(.text .text.*)\newline
- .text          0x40000000     0x1000\newline 
- ...\newline
- .data           0x40006350      0xac8\newline
- *(.data .data.*)\newline
- .data          0x40006350        0x8\newline 
- *(.bss .bss.*)\newline
- .bss           0x40006e20       0x1c\newline 
- ...\newline
- .myarrays       0x40007618      0x320\newline
-                0x40007618                . = ALIGN (0x8)\newline
-                0x40007618                myarrays\_start = .\newline
-                0x40007618                \_myarrays\_start = .\newline
-                0x40007618                \_\_.myarrays\_start = .\newline
- *(.myarrays .myarrays.*)\newline
- .myarrays      0x40007618      0x320 src\\TP1\_5.o\newline
- \color{red}
-                0x40007618                rayons\newline
-                0x400077a8                perimetres\newline
-   \color{black}             
- *(COMMON)
-                0x40007938                . = ALIGN (0x8)\newline
-                0x40007938                end = .\newline
-                0x40007938                \_end = .\newline
-                0x40007938                \_\_end = .\newline
-                0x40007938                \_\_\_end = .\newline
-                0x40007938                \_\_heap1 = .\newline
+\begin{figure}[H]
+\includegraphics[width=10cm]{infovar.png} 
 
-.jcr            0x40007938        0x4\newline
- *(.jcr)
- .jcr           0x40007938        0x4\newline 
-.rela.dyn\newline
+	\end{figure}
+	\end{framed}
+	\noindent
+celles qui concernent les fonctions sont en bleu.
+\begin{framed}
+\begin{figure}[H]
+\includegraphics[width=10cm]{infoFunct.png}
 
-.stab           0x00000000      0xeac\newline
- *(.stab)
- \color{blue}
- .stab          0x00000000      0x15c src\\test.o \newline
- .stab          0x0000015c      0x7bc src\\perimetre.o\newline
-                                0x7c8 (size before relaxing)\newline
- .stab          0x00000918      0x2f4 src\\fibonacci.o\newline
-                                0x858 (size before relaxing)\newline
- .stab          0x00000c0c      0x2a0 src\\TP1\_5.o\newline
-                                0x804 (size before relaxing)\newline
-\color{black}
-...\newline
-}
-  
-\end{framed}
-Concernant la fonction calculant le périmètre, nous avons appris que ??
-Nous avons appris concernant le tableau de float que :??
+	\end{figure}
+		\end{framed}
 
+-Concernant la fonction calculant le périmètre dont les informations se trouvent dans la section "text", nous avons constaté  qu'elle se trouve à l'adresse 0x400019b8 et que sa taille est égale à 0xb8 (184 octets).\newline
+-En ce qui concerne le tableau de float contenant les périmètres calculés, dont les informations se trouvent dans la section "myarrays" que nous avons ajouté,  nous avons appris que son adresse est :  0x400077a8 et sa taille est égale à 400 octets.
+
+	\begin{figure}[H]
+\includegraphics[width=10cm]{Capture} 
+
+\caption{Modification des options de linkage par défaut du projet sur Eclipse}
+
+	\end{figure}
 \section{Génération du fichier SREC}
 Voici l'image SREC de notre exécutable généré par la commande:\newline
 sparc-elf-objcopy.exe -O srec TP1\_1 TP1\_5.srec \newline
@@ -2059,4 +2029,82 @@ S70540000000BA\newline
 -L'adresse du premier octet :0x40000000\newline
 -L'adresse du dernier octet:0x40007928
 \section{Optimisation et débogage}
+L'instruction qui cause le bug est l'instruction stockant dans le tableau des périmètres le résultat obtenu à partir du tableau des rayons. On en conclut donc que le tableau des rayons, casté depuis un tableau d'entiers, est en cause.\newline
+Dans le bloc C suivant :
+\begin{framed}
+ 
+
+\begin{minted}{c}
+  for (i = 0 ; i < nombre ; i++) {
+    float tmp ;
+    tmp = pi * rayons[i] ;
+    tmp *= 2 ;
+    perimetres[i] = tmp ;
+  }
+\end{minted}
+\end{framed}
+C'est la cinquième ligne qui cause la \textit{segmentation fault}.\newline
+Dans la séquence d'instructions assembleur correspondante, elle a lieu à l'occasion de l'instruction surlignée en rouge :
+  \begin{framed}
+   {\fontfamily{qcr}\selectfont
+    tmp *= 2 ;\newline
+    400012bc:	d1 07 bf f4 \tab	ld  \tab[ \%fp + -12 ], \%f8 \newline
+      400012c0:	91 a2 08 28 \tab	fadds \tab \%f8, \%f8, \%f8  \newline
+      400012c4:	d1 27 bf f4 \tab	st  \tab\%f8, [ \%fp + -12 ]\newline
+      perimetres[i] = tmp ;\newline
+      \color{red}
+      400012c8:	c2 07 bf fc \tab	ld \tab [ \%fp + -4 ],\%g1\newline
+        \color{black}
+        400012cc:	83 28 60 02 \tab	sll \tab \%g1, 2, \%g1\newline
+        400012d0:	c4 07 a0 48 \tab	ld  \tab[ \%fp + 0x48 ], \%g2 \newline
+          400012d4:	82 00 80 01 \tab	add \tab \%g2, \%g1, \%g1\newline
+          400012d8:	d1 07 bf f4 	\tab ld \tab [ \%fp + -12 ], \%f8\newline
+            400012dc:	d1 20 40 00 \tab	st \tab \%f8, [ \%g1 ] \newline    
+            }
+  \end{framed}
+  La fonction calculant le périmètre a prévu de manipuler un tableau de réels, mais elle ne reçoit en réalité qu'un tableau d'entiers vu comme un tableau de réels. On suppose que, les réels et les entiers n'étant pas représentés de la même manière en mémoire, le déplacement du \textit{frame pointer} causant la \textit{segmentation fault}, lit des données inconsistantes dans le tableau des rayons... Et échoue donc au moment de les copier dans le tableau des périmètres.
+  \section{Sous Linux}
+  Nous avons également réalisé le TP sous Linux (et sans Eclipse), afin de comprendre plus finement la chaîne de compilation et de débogage. Ci-dessous le fichier Makefile que nous avons écrit pour utiliser l'environnement de développement :
+  \begin{framed}
+   {\fontfamily{qcr}\selectfont
+  \noindent
+DB = sparc-gaisler-elf-gdb \newline
+CC = sparc-gaisler-elf-gcc \newline
+CFLAGS = -O0 -g -c -mhard-float -mcpu=v8 \newline
+LINKER = sparc-gaisler-elf-gcc \newline
+LS= lds\_wip.lds \newline
+SRC=consommateur.c fibonacci.c tp1.c \newline
+OBJ= \$(SRC:.c=.o) \newline
+TARGET= a.out \newline
+MAP:=\$(TARGET).map \newline
+SREC:=\$(TARGET).srec \newline
+DUMP:=\$(TARGET).dump \newline
+ \newline
+all: cc \newline
+	sparc-gaisler-elf-objcopy -O srec \$(TARGET) \$(SREC) \newline
+	sparc-gaisler-elf-objdump -d -S \$(TARGET) > \$(DUMP) \newline
+ \newline
+cc: \$(OBJ) \$(LS) \newline
+	\$(LINKER) -o \$(TARGET) -T \$(LS) -Xlinker -Map=\$(MAP) \$(OBJ) \newline
+ \newline
+\%.o: \%.c \newline
+	\$(CC) \$(CFLAGS) -c \$< \newline
+ \newline
+consommateur.o: consommateur.h \newline
+fibonacci.o: fibonacci.h \newline
+tp1.o: fibonacci.o consommateur.o \newline
+ \newline
+exec: \$(TARGET) \newline
+	\$(DB) -x gdbs\_conso.gdb \$< \newline
+ \newline
+segfault: \$(TARGET) \newline
+	\$(DB) -tui -x gdbs\_segfault.gdb \$< \newline
+ \newline
+clean: \newline
+	@rm -f *.o \newline
+	@rm -f \$(TARGET)* \newline
+	
+	}
+  \end{framed}
+
 \end{document}
